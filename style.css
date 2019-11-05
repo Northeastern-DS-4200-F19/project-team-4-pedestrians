@@ -21,6 +21,16 @@ h1, h2, h3 {
   height: 100%;
 }
 
+td {
+	font-size: 5px;
+	border: 1px black solid;
+	padding: 15px;
+}
+
+#vis-svg {
+	margin-left: 15%;
+}
+
 /* Fork on GitHub ribbon via https://codepo8.github.io/css-fork-on-github-ribbon/# */  
 #forkongithub a{
 	background:#00F;
