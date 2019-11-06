@@ -1,6 +1,7 @@
 // Parse survey data
 d3.csv("/data/survey-data.csv").then(function (data) {
-    tabulate(data, data.columns)
+    tabulate(data, data.columns);
+    createParallelCoordinates();
 });
 
 /**
@@ -48,4 +49,19 @@ function tabulate(data, columns) {
         });
 
     return table;
+}
+
+function createParallelCoordinates() {
+    let data = [
+        [0,-0,0,0,0,3 ],
+        [1,-1,1,2,1,6 ],
+        [2,-2,4,4,0.5,2],
+        [3,-3,9,6,0.33,4],
+        [4,-4,16,8,0.25,9]
+    ];
+
+    let pc = ParCoords()("#example")
+        .data(data)
+        .render()
+        .createAxes();
 }
