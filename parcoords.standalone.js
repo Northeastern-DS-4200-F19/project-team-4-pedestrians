@@ -10865,7 +10865,7 @@
         markedShadowColor: '#ffffff',
         markedShadowBlur: 10,
         rate: 20,
-        width: 600,
+        width: 980,
         height: 300,
         margin: { top: 24, right: 20, bottom: 12, left: 20 },
         nullValueSeparator: 'undefined', // set to "top" or "bottom"
