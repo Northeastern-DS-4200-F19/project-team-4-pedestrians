@@ -1,14 +1,24 @@
+let bmc = {
+    title: "Park side heading towards Boston Med. Center",
+    color: "rgb(0,151,255)"
+};
+let neu = {
+    title: "Park side heading towards Huntington Ave.",
+    color: "rgb(255,151,0)"
+};
+
 // Parse survey data
 d3.csv("/data/survey-data.csv").then(function (data) {
     tabulate(data, data.columns);
-    createParallelCoordinates();
+    createParallelCoordinates(data, data.columns);
+    createTable(data, data.columns);
 });
 
 /**
  * Create D3 table and populate with survey data
- * 
- * @param {Object} data 
- * @param {Object} columns 
+ *
+ * @param {Object} data
+ * @param {Object} columns
  */
 function tabulate(data, columns) {
     let svg = d3.select("#vis-svg");
@@ -51,17 +61,39 @@ function tabulate(data, columns) {
     return table;
 }
 
-function createParallelCoordinates() {
-    let data = [
-        [0,-0,0,0,0,3 ],
-        [1,-1,1,2,1,6 ],
-        [2,-2,4,4,0.5,2],
-        [3,-3,9,6,0.33,4],
-        [4,-4,16,8,0.25,9]
-    ];
+function createTable(data, coordinates) {
+    // d3.divgrid();
+}
 
-    let pc = ParCoords()("#example")
-        .data(data)
+function createParallelCoordinates(data, coordinates) {
+    // Data cleanup
+    let dimensions = {
+        "Pref. Path (rush)": {},
+        "Pref. Path (not rush)": {},
+        "Most Pref. Path (in general)": {},
+        "Least Pref. Path (in general)": {}
+    };
+
+    let config = {
+        tickValues: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
+        lineWidth: 2
+    };
+    let pc = ParCoords(config)("#parcoords-vis");
+    pc.data(data)
+        .dimensions(dimensions)
+        .hideAxis([coordinates[0]])
+        .color(d => {
+            let sideOfRes = d["Side of Residency"];
+            if (sideOfRes === bmc.title) {
+                return bmc.color
+            } else {
+                return neu.color
+            }
+
+        })
         .render()
-        .createAxes();
+        .createAxes()
+        .shadows()
+        .reorderable()
+        .brushMode('1D-axes');
 }

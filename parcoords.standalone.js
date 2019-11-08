@@ -8649,28 +8649,35 @@
                     return linear$2().domain(_extent).range(getRange(config));
                 },
                 string: function string(k) {
-                    var counts = {},
-                        domain = [];
-                    // Let's get the count for each value so that we can sort the domain based
-                    // on the number of items for each value.
-                    config.data.map(function (p) {
-                        if (p[k] === undefined && config.nullValueSeparator !== 'undefined') {
-                            return null; // null values will be drawn beyond the horizontal null value separator!
-                        }
-                        if (counts[p[k]] === undefined) {
-                            counts[p[k]] = 1;
-                        } else {
-                            counts[p[k]] = counts[p[k]] + 1;
-                        }
-                    });
-                    if (config.flipAxes.includes(k)) {
-                        domain = Object.getOwnPropertyNames(counts).sort();
-                    } else {
-                        var tempArr = Object.getOwnPropertyNames(counts).sort();
-                        for (var i = 0; i < Object.getOwnPropertyNames(counts).length; i++) {
-                            domain.push(tempArr.pop());
-                        }
-                    }
+                    // Group 4 Note: the following code is commented out because the domain
+                    // variable for each axis only considers values from the data, which in
+                    // most cases, does not include the full domain, namely letters from A to H.
+
+                    // var counts = {},
+                    //     domain = [];
+                    // // Let's get the count for each value so that we can sort the domain based
+                    // // on the number of items for each value.
+                    // config.data.map(function (p) {
+                    //     if (p[k] === undefined && config.nullValueSeparator !== 'undefined') {
+                    //         return null; // null values will be drawn beyond the horizontal null value separator!
+                    //     }
+                    //     if (counts[p[k]] === undefined) {
+                    //         counts[p[k]] = 1;
+                    //     } else {
+                    //         counts[p[k]] = counts[p[k]] + 1;
+                    //     }
+                    // });
+                    // if (config.flipAxes.includes(k)) {
+                    //     domain = Object.getOwnPropertyNames(counts).sort();
+                    // } else {
+                    //     var tempArr = Object.getOwnPropertyNames(counts).sort();
+                    //     for (var i = 0; i < Object.getOwnPropertyNames(counts).length; i++) {
+                    //         domain.push(tempArr.pop());
+                    //     }
+                    // }
+
+                    // populate domain with tickValues from the config object
+                    var domain = config.tickValues;
 
                     //need to create an ordinal scale for categorical data
                     var categoricalRange = [];
@@ -8985,7 +8992,7 @@
                 position = (scale.bandwidth ? center : number$3)(scale.copy()),
                 selection = context.selection ? context.selection() : context,
                 path = selection.selectAll(".domain").data([null]),
-                tick = selection.selectAll(".tick").data(values, scale).order(),
+                tick = selection.selectAll(".tick").data(values, scale),
                 tickExit = tick.exit(),
                 tickEnter = tick.enter().append("g").attr("class", "tick"),
                 line = tick.select("line"),

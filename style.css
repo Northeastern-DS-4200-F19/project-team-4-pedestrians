@@ -88,6 +88,11 @@ td {
 	}
 }
 
+.parcoords {
+	width: 50%;
+	height: 350px;
+}
+
 .parcoords > svg, .parcoords > canvas {
 	font: 14px sans-serif;
 	position: absolute;
