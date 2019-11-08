@@ -38,7 +38,6 @@ function createTable(data, columns, pc) {
         .enter()
         .append('tr')
         .on("mouseover", d => {
-            console.log(d);
             pc.highlight([d]);
         })
         .on("mouseout", d => {
