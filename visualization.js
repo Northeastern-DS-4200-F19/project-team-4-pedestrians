@@ -9,18 +9,12 @@ let neu = {
 
 // Parse survey data
 d3.csv("/data/survey-data.csv").then(function (data) {
-    tabulate(data, data.columns);
-    createParallelCoordinates(data, data.columns);
-    createTable(data, data.columns);
+    let pc = createParallelCoordinates(data, data.columns);
+    createTable(data, data.columns, pc);
 });
 
-/**
- * Create D3 table and populate with survey data
- *
- * @param {Object} data
- * @param {Object} columns
- */
-function tabulate(data, columns) {
+
+function createTable(data, columns, pc) {
     let svg = d3.select("#vis-svg");
     let table = svg.append("foreignObject")
         .attr("width", 800)
@@ -42,7 +36,14 @@ function tabulate(data, columns) {
     let rows = tbody.selectAll('tr')
         .data(data)
         .enter()
-        .append('tr');
+        .append('tr')
+        .on("mouseover", d => {
+            console.log(d);
+            pc.highlight([d]);
+        })
+        .on("mouseout", d => {
+            pc.unhighlight([d]);
+        });
 
     let cells = rows.selectAll('td')
         .data(function (row) {
@@ -59,10 +60,6 @@ function tabulate(data, columns) {
         });
 
     return table;
-}
-
-function createTable(data, coordinates) {
-    // d3.divgrid();
 }
 
 function createParallelCoordinates(data, coordinates) {
@@ -96,4 +93,6 @@ function createParallelCoordinates(data, coordinates) {
         .shadows()
         .reorderable()
         .brushMode('1D-axes');
+
+    return pc;
 }
