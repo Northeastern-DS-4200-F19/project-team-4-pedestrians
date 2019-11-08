@@ -8,7 +8,7 @@ let neu = {
 };
 
 // Parse survey data
-d3.csv("/data/survey-data.csv").then(function (data) {
+d3.csv("./data/survey-data.csv").then(function (data) {
     let pc = createParallelCoordinates(data, data.columns);
     createTable(data, data.columns, pc);
 });
