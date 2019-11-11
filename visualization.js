@@ -7,13 +7,21 @@ let neu = {
     color: "rgb(255,151,0)"
 };
 
+// Init ParCoords globally
+let pc;
+
 // Parse survey data
 d3.csv("./data/survey-data.csv").then(function (data) {
-    let pc = createParallelCoordinates(data, data.columns);
+    pc = createParallelCoordinates(data, data.columns);
     createTable(data, data.columns, pc);
 });
 
-
+/**
+ * Creates a table and appends to SVG
+ * @param {Object} data 
+ * @param {Object} columns 
+ * @param {ParCoords} pc 
+ */
 function createTable(data, columns, pc) {
     let svg = d3.select("#vis-svg");
     let table = svg.append("foreignObject")
@@ -37,12 +45,8 @@ function createTable(data, columns, pc) {
         .data(data)
         .enter()
         .append('tr')
-        .on("mouseover", d => {
-            pc.highlight([d]);
-        })
-        .on("mouseout", d => {
-            pc.unhighlight([d]);
-        });
+        .on("mouseover", trMouseOver)
+        .on("mouseout", trMouseOut);
 
     let cells = rows.selectAll('td')
         .data(function (row) {
@@ -61,6 +65,29 @@ function createTable(data, columns, pc) {
     return table;
 }
 
+/**
+ * Called on TR mouseover
+ * @param {Object} d - table row data
+ */
+function trMouseOver(d) {
+    pc.highlight([d]);
+    d3.select(this).style("background-color", "#d3d3d3");
+}
+
+/**
+ * Called on TR mouseoff
+ * @param {Object} d - table row data
+ */
+function trMouseOut(d) {
+    pc.unhighlight([d]);
+    d3.select(this).style("background-color", "transparent");
+}
+
+/**
+ * Create ParallelCoordinate Table using d3.parcoords
+ * @param {Object} data 
+ * @param {Object}} coordinates 
+ */
 function createParallelCoordinates(data, coordinates) {
     // Data cleanup
     let dimensions = {
