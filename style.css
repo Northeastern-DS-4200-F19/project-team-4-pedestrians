@@ -24,7 +24,7 @@ h1, h2, h3 {
 td {
 	font-size: 5px;
 	border: 1px black solid;
-	padding: 15px;
+	padding: 2px;
 }
 
 #vis-svg {
