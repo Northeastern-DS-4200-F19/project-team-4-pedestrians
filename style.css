@@ -1,166 +1,200 @@
 /* General formatting */
 body {
-	padding: 0 10px;
-	font: 18px/1.5 -apple-system, BlinkMacSystemFont, "avenir next",avenir, "Segoe UI", "lucida grande", "helvetica neue", helvetica, "Fira Sans",roboto, noto, "Droid Sans", cantarell, oxygen, ubuntu, "franklin gothic medium", "century gothic", "Liberation Sans",
-	sans-serif;
+    padding: 0 10px;
+    font: 18px/1.5 -apple-system, BlinkMacSystemFont, "avenir next", avenir, "Segoe UI", "lucida grande", "helvetica neue", helvetica, "Fira Sans", roboto, noto, "Droid Sans", cantarell, oxygen, ubuntu, "franklin gothic medium", "century gothic", "Liberation Sans",
+    sans-serif;
 }
 
 h1, h2, h3 {
-	line-height: 1.2
+    line-height: 1.2
 }
 
 /* Your text should be in a nice narrow column */
 .content-column {
-	max-width: 650px;
-	margin: 40px auto;
+    max-width: 650px;
+    margin: 40px auto;
 }
 
 /* But your visualization should be full-width and full-height */
-.vis-holder {
-  width: 100%;
-  height: 100%;
+.vis-container {
+    width: 100%;
+    height: 100%;
 }
 
-td {
-	font-size: 5px;
-	border: 1px black solid;
-	padding: 2px;
+.vis-container {
+    display: -webkit-flex; /* Safari */
+    -webkit-flex-wrap: wrap; /* Safari 6.1+ */
+    display: flex;
+    flex-wrap: wrap;
 }
 
-#map-holder {
-	width: 50%;
-	height: 50%;
-	margin-left: 20%
+#map-holder,
+#parcoords-holder,
+#legends-holder,
+#table-holder {
+    width: 45%;
 }
 
-#vis-svg {
-	margin-left: 15%;
+#legends-holder,
+#table-holder {
+	margin-top: 35px;
+	height: 230px;
 }
 
-#parcoords-vis {
-	margin-left: 20%;
+/* Fork on GitHub ribbon via https://codepo8.github.io/css-fork-on-github-ribbon/# */
+#forkongithub a {
+    background: #00F;
+    color: #fff;
+    text-decoration: none;
+    font-family: arial, sans-serif;
+    text-align: center;
+    font-weight: bold;
+    padding: 5px 40px;
+    font-size: 1rem;
+    line-height: 2rem;
+    position: relative;
+    transition: 0.5s;
 }
 
-/* Fork on GitHub ribbon via https://codepo8.github.io/css-fork-on-github-ribbon/# */  
-#forkongithub a{
-	background:#00F;
-	color:#fff;
-	text-decoration:none;
-	font-family:arial,sans-serif;
-	text-align:center;
-	font-weight:bold;
-	padding:5px 40px;
-	font-size:1rem;
-	line-height:2rem;
-	position:relative;
-	transition:0.5s;
-}
-#forkongithub a:hover{
-	background:#118;
-	color:#fff;
-}
-#forkongithub a::before,#forkongithub a::after{
-	content:"";
-	width:100%;
-	display:block;
-	position:absolute;
-	top:1px;
-	left:0;
-	height:1px;
-	background:#fff;
-}
-#forkongithub a::after{
-	bottom:1px;
-	top:auto;
-}
-@media screen and (min-width:800px){
-	#forkongithub{
-		position:fixed;
-		display:block;
-		top:0;
-		right:0;
-		width:200px;
-		overflow:hidden;
-		height:200px;
-		z-index:9999;
-	}
-	#forkongithub a{
-		width:200px;
-		position:absolute;
-		top:60px;
-		right:-60px;
-		transform:rotate(45deg);
-		-webkit-transform:rotate(45deg);
-		-ms-transform:rotate(45deg);
-		-moz-transform:rotate(45deg);
-		-o-transform:rotate(45deg);
-		box-shadow:4px 4px 10px rgba(0,0,0,0.8);
-	}
+#forkongithub a:hover {
+    background: #118;
+    color: #fff;
 }
 
-.parcoords {
-	width: 980px;
-	height: 350px;
+#forkongithub a::before, #forkongithub a::after {
+    content: "";
+    width: 100%;
+    display: block;
+    position: absolute;
+    top: 1px;
+    left: 0;
+    height: 1px;
+    background: #fff;
+}
+
+#forkongithub a::after {
+    bottom: 1px;
+    top: auto;
+}
+
+@media screen and (min-width: 800px) {
+    #forkongithub {
+        position: fixed;
+        display: block;
+        top: 0;
+        right: 0;
+        width: 200px;
+        overflow: hidden;
+        height: 200px;
+        z-index: 9999;
+    }
+
+    #forkongithub a {
+        width: 200px;
+        position: absolute;
+        top: 60px;
+        right: -60px;
+        transform: rotate(45deg);
+        -webkit-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+        -moz-transform: rotate(45deg);
+        -o-transform: rotate(45deg);
+        box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.8);
+    }
 }
 
 .parcoords > svg, .parcoords > canvas {
-	font: 14px sans-serif;
-	position: absolute;
+    font: 14px sans-serif;
+    position: absolute;
 }
 
 .parcoords > canvas {
-	pointer-events: none;
+    pointer-events: none;
 }
 
 .parcoords text.label {
-	cursor: default;
-	fill: black;
+    cursor: default;
+    fill: black;
 }
 
 .parcoords rect.background {
-	fill: transparent;
+    fill: transparent;
 }
 
 .parcoords rect.background:hover {
-	fill: rgba(120, 120, 120, 0.2);
+    fill: rgba(120, 120, 120, 0.2);
 }
 
 .parcoords .resize rect {
-	fill: rgba(0, 0, 0, 0.1);
+    fill: rgba(0, 0, 0, 0.1);
 }
 
 .parcoords rect.extent {
-	fill: rgba(255, 255, 255, 0.25);
-	stroke: rgba(0, 0, 0, 0.6);
+    fill: rgba(255, 255, 255, 0.25);
+    stroke: rgba(0, 0, 0, 0.6);
 }
 
 .parcoords .axis line, .parcoords .axis path {
-	fill: none;
-	stroke: #222;
-	shape-rendering: crispEdges;
+    fill: none;
+    stroke: #222;
+    shape-rendering: crispEdges;
 }
 
 .parcoords canvas {
-	opacity: 1;
-	-moz-transition: opacity 0.3s;
-	-webkit-transition: opacity 0.3s;
-	-o-transition: opacity 0.3s;
+    opacity: 1;
+    -moz-transition: opacity 0.3s;
+    -webkit-transition: opacity 0.3s;
+    -o-transition: opacity 0.3s;
 }
 
 .parcoords canvas.faded {
-	opacity: 0.25;
+    opacity: 0.25;
 }
 
 .parcoords canvas.dimmed {
-	opacity: 0.85;
+    opacity: 0.85;
 }
 
 .parcoords {
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-	background-color: white;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-color: white;
+}
+
+.selected {
+    background-color: #e1e1e1;
+}
+
+#fo-table {
+    background: #f9f9f9;
+    border-collapse: collapse;
+}
+
+#fo-table tbody {
+    display: block;
+    width: 100%;
+    overflow: auto;
+    height: 200px;
+}
+
+#fo-table thead tr {
+    display: block;
+}
+
+#fo-table thead {
+    background: #c8c8c8;
+}
+
+#fo-table th, #fo-table td {
+    width: 130px;
+    border: none;
+    border-bottom: 1px solid #c8c8c8;
+}
+
+#fo-table tbody tr:hover {
+	background: #f0f0f0;
+	cursor: pointer;
 }
