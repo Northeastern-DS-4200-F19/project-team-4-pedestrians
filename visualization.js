@@ -122,14 +122,22 @@ function highlightSelectedRows() {
     });
 }
 
+function collectPathsOnly(data) {
+    let paths = [];
+    for (let [key, value] of Object.entries(data)) {
+        if (key !== 'Side of Residency') {
+            paths.push(value)
+        }
+    }
+    return paths;
+}
+
 /**
  * Highlights the selected paths on the map
  * @param {Object} data
  */
 function highlightPaths(data) {
-    let scrubbedData = data;
-    delete scrubbedData['Side of Residency'];
-    let paths = Object.values(scrubbedData);
+    let paths = collectPathsOnly(data);
     paths.forEach(function (path) {
         let pathId = path.toLowerCase();
         let mapId = '#map_' + pathId;
@@ -157,8 +165,7 @@ function highlightPaths(data) {
  * @param {Object} data
  */
 function unhighlightPaths(data) {
-    delete data['Side of Residency'];
-    let paths = Object.values(data);
+    let paths = collectPathsOnly(data);
     paths.forEach(function (path) {
         let pathId = path.toLowerCase();
         let mapId = '#map_' + pathId;
@@ -189,13 +196,12 @@ function createParallelCoordinates(data, coordinates) {
         .dimensions(dimensions)
         .hideAxis([coordinates[0]])
         .color(d => {
-            let sideOfRes = d["Side of Residency"];
+            let sideOfRes = d[coordinates[0]];
             if (sideOfRes === bmc.title) {
                 return bmc.color
             } else {
                 return neu.color
             }
-
         })
         .render()
         .createAxes()
