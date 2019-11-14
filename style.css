@@ -27,12 +27,18 @@ td {
 	padding: 2px;
 }
 
+#map-holder {
+	width: 50%;
+	height: 50%;
+	margin-left: 20%
+}
+
 #vis-svg {
 	margin-left: 15%;
 }
 
 #parcoords-vis {
-	margin-left: 15%;
+	margin-left: 20%;
 }
 
 /* Fork on GitHub ribbon via https://codepo8.github.io/css-fork-on-github-ribbon/# */  

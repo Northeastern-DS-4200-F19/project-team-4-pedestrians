@@ -9,6 +9,17 @@ let neu = {
     icon: "<svg width='50px' height='25px' aria-hidden=\"true\" focusable=\"false\"><use xlink:href=\"./images/icons.svg#neu\"></use></svg>"
 };
 
+let mapData = {
+    a: "medium",
+    b: "low",
+    c: "medium",
+    d: "high",
+    e: "medium",
+    f: "low",
+    g: "low",
+    h: "high"
+};
+
 
 // Init ParCoords globally
 let pc;
@@ -86,6 +97,7 @@ function createTable(data, columns, pc) {
  * @param {Object} d - table row data
  */
 function trMouseOver(d) {
+    highlightPaths(d);
     pc.highlight([d]);
     d3.select(this).style("background-color", "#d3d3d3");
 }
@@ -95,8 +107,52 @@ function trMouseOver(d) {
  * @param {Object} d - table row data
  */
 function trMouseOut(d) {
+    unhighlightPaths(d);
     pc.unhighlight([d]);
     d3.select(this).style("background-color", "transparent");
+}
+
+/**
+ * Highlights the selected paths on the map
+ * @param {Object} data 
+ */
+function highlightPaths(data) {
+    let scrubbedData = data;
+    delete scrubbedData['Side of Residency'];
+    let paths = Object.values(scrubbedData);
+    paths.forEach(function(path) {
+        let pathId = path.toLowerCase();
+        let mapId = '#map_' + pathId;
+        let congestion = mapData[pathId];
+        let congestionColor;
+
+        switch (congestion) {
+            case 'low':
+                congestionColor = '#d9d9d9';
+                break;
+            case 'medium':
+                congestionColor = '#a6a6a6';
+                break;
+            case 'high':
+                congestionColor = '#595959';
+                break;
+            default:
+        }
+        d3.select(mapId).attr("fill", congestionColor);
+    });
+}
+
+/**
+ * Unhighlights the selected path
+ * @param {Object} data 
+ */
+function unhighlightPaths(data) {
+    let paths = Object.values(data);
+    paths.forEach(function(path) {
+        let pathId = path.toLowerCase();
+        let mapId = '#map_' + pathId;
+        d3.select(mapId).attr("fill", 'white');
+    });
 }
 
 /**
