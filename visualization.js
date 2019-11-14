@@ -40,8 +40,10 @@ function createTable(data, columns, pc) {
     let svg = d3.select("#vis-svg");
     let table = svg.append("foreignObject")
         .attr("width", 800)
-        .attr("height", '100%')
-        .append("xhtml:body");
+        .attr("height", 300)
+        .append("xhtml:body")
+        .append("table")
+        .attr("id", "fo-table");
     let thead = table.append("thead");
     let tbody = table.append("tbody");
 
@@ -59,8 +61,7 @@ function createTable(data, columns, pc) {
         .data(data)
         .enter()
         .append('tr')
-        .on("mouseover", trMouseOver)
-        .on("mouseout", trMouseOut);
+        .on('click', tableRowOnClick);
 
     let cells = rows.selectAll('td')
         .data(function (row) {
@@ -92,35 +93,44 @@ function createTable(data, columns, pc) {
     return table;
 }
 
-/**
- * Called on TR mouseover
- * @param {Object} d - table row data
- */
-function trMouseOver(d) {
-    highlightPaths(d);
-    pc.highlight([d]);
-    d3.select(this).style("background-color", "#d3d3d3");
+function tableRowOnClick() {
+    let selectedRow = d3.select(this);
+    selectedRow.classed('selected', !selectedRow.classed('selected'));
+    highlightSelectedRows();
 }
 
-/**
- * Called on TR mouseoff
- * @param {Object} d - table row data
- */
-function trMouseOut(d) {
-    unhighlightPaths(d);
-    pc.unhighlight([d]);
-    d3.select(this).style("background-color", "transparent");
+function highlightSelectedRows() {
+    let deselectedRows = [];
+    let selectedRows = [];
+    d3.select('tbody').selectAll('tr').select(function (d) {
+        if (d3.select(this).classed('selected')) {
+            selectedRows.push(d)
+        } else {
+            deselectedRows.push(d)
+        }
+    });
+    if (selectedRows.length !== 0) {
+        pc.highlight(selectedRows);
+    } else {
+        pc.unhighlight();
+    }
+    deselectedRows.forEach(function (d) {
+        unhighlightPaths(d);
+    });
+    selectedRows.forEach(function (d) {
+        highlightPaths(d);
+    });
 }
 
 /**
  * Highlights the selected paths on the map
- * @param {Object} data 
+ * @param {Object} data
  */
 function highlightPaths(data) {
     let scrubbedData = data;
     delete scrubbedData['Side of Residency'];
     let paths = Object.values(scrubbedData);
-    paths.forEach(function(path) {
+    paths.forEach(function (path) {
         let pathId = path.toLowerCase();
         let mapId = '#map_' + pathId;
         let congestion = mapData[pathId];
@@ -144,11 +154,12 @@ function highlightPaths(data) {
 
 /**
  * Unhighlights the selected path
- * @param {Object} data 
+ * @param {Object} data
  */
 function unhighlightPaths(data) {
+    delete data['Side of Residency'];
     let paths = Object.values(data);
-    paths.forEach(function(path) {
+    paths.forEach(function (path) {
         let pathId = path.toLowerCase();
         let mapId = '#map_' + pathId;
         d3.select(mapId).attr("fill", 'white');
@@ -173,7 +184,7 @@ function createParallelCoordinates(data, coordinates) {
         tickValues: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
         lineWidth: 2
     };
-    let pc = ParCoords(config)("#parcoords-vis");
+    let pc = ParCoords(config)("#parcoords-holder");
     pc.data(data)
         .dimensions(dimensions)
         .hideAxis([coordinates[0]])
