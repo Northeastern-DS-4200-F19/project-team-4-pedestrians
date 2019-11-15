@@ -3,6 +3,7 @@ let bmc = {
     color: "rgb(0,151,255)",
     icon: "<svg width='50px' height='25px' aria-hidden=\"true\" focusable=\"false\"><use xlink:href=\"./images/icons.svg#bmc\"></use></svg>"
 };
+
 let neu = {
     title: "Park side heading towards Huntington Ave.",
     color: "rgb(255,151,0)",
@@ -19,7 +20,6 @@ let mapData = {
     g: "low",
     h: "high"
 };
-
 
 // Init ParCoords globally
 let pc;
@@ -40,12 +40,15 @@ function createTable(data, columns, pc) {
     let svg = d3.select("#vis-svg");
     let table = svg.append("foreignObject")
         .attr("width", 800)
-        .attr("height", 300)
+        .attr("height", 400)
         .append("xhtml:body")
         .append("table")
         .attr("id", "fo-table");
     let thead = table.append("thead");
-    let tbody = table.append("tbody");
+    table.append("tbody").attr("id", "tbodyForSelected");
+    table.append("div").attr("id", "tbodySeparator");
+    let tbodyForDeselected = table.append("tbody")
+        .attr("id", "tbodyForDeselected");
 
     thead.append('tr')
         .selectAll('th')
@@ -57,7 +60,7 @@ function createTable(data, columns, pc) {
             return column
         });
 
-    let rows = tbody.selectAll('tr')
+    let rows = tbodyForDeselected.selectAll('tr')
         .data(data)
         .enter()
         .append('tr')
@@ -95,6 +98,11 @@ function createTable(data, columns, pc) {
 
 function tableRowOnClick() {
     let selectedRow = d3.select(this);
+    if (selectedRow.classed('selected')) {
+        d3.select('#tbodyForDeselected').node().append(selectedRow.node());
+    } else {
+        d3.select('#tbodyForSelected').node().append(selectedRow.node());
+    }
     selectedRow.classed('selected', !selectedRow.classed('selected'));
     highlightSelectedRows();
 }
@@ -102,12 +110,11 @@ function tableRowOnClick() {
 function highlightSelectedRows() {
     let deselectedRows = [];
     let selectedRows = [];
-    d3.select('tbody').selectAll('tr').select(function (d) {
-        if (d3.select(this).classed('selected')) {
-            selectedRows.push(d)
-        } else {
-            deselectedRows.push(d)
-        }
+    d3.select('#tbodyForDeselected').selectAll('tr').select(function (d) {
+        deselectedRows.push(d)
+    });
+    d3.select('#tbodyForSelected').selectAll('tr').select(function (d) {
+        selectedRows.push(d)
     });
     if (selectedRows.length !== 0) {
         pc.highlight(selectedRows);
@@ -120,6 +127,7 @@ function highlightSelectedRows() {
     selectedRows.forEach(function (d) {
         highlightPaths(d);
     });
+    console.log(deselectedRows);
 }
 
 function collectPathsOnly(data) {
@@ -173,27 +181,22 @@ function unhighlightPaths(data) {
     });
 }
 
+function moveBrushedToSelectedTableBody(brushed) {
+
+}
+
 /**
  * Create ParallelCoordinate Table using d3.parcoords
  * @param {Object} data
  * @param {Object} coordinates
  */
 function createParallelCoordinates(data, coordinates) {
-    // Data cleanup
-    let dimensions = {
-        "Pref. Path (rush)": {},
-        "Pref. Path (not rush)": {},
-        "Most Pref. Path (in general)": {},
-        "Least Pref. Path (in general)": {}
-    };
-
     let config = {
-        tickValues: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
+        tickValues: ['A', 'B', 'C', 'D', 'H', 'G', 'F', 'E'],
         lineWidth: 2
     };
     let pc = ParCoords(config)("#parcoords-holder");
     pc.data(data)
-        .dimensions(dimensions)
         .hideAxis([coordinates[0]])
         .color(d => {
             let sideOfRes = d[coordinates[0]];
@@ -206,8 +209,10 @@ function createParallelCoordinates(data, coordinates) {
         .render()
         .createAxes()
         .shadows()
-        .reorderable()
-        .brushMode('1D-axes');
+        .brushMode('1D-axes')
+        .on('brush', function (data) {
+            moveBrushedToSelectedTableBody(data)
+        });
 
     return pc;
 }

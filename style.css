@@ -37,8 +37,8 @@ h1, h2, h3 {
 
 #legends-holder,
 #table-holder {
-	margin-top: 35px;
-	height: 230px;
+	margin-top: 25px;
+	height: 250px;
 }
 
 /* Fork on GitHub ribbon via https://codepo8.github.io/css-fork-on-github-ribbon/# */
@@ -165,7 +165,7 @@ h1, h2, h3 {
 }
 
 .selected {
-    background-color: #e1e1e1;
+    background-color: #ebebeb;
 }
 
 #fo-table {
@@ -173,11 +173,18 @@ h1, h2, h3 {
     border-collapse: collapse;
 }
 
-#fo-table tbody {
+#tbodyForSelected {
     display: block;
     width: 100%;
     overflow: auto;
-    height: 200px;
+    height: 150px;
+}
+
+#tbodyForDeselected {
+    display: block;
+    width: 100%;
+    overflow: auto;
+    height: 120px;
 }
 
 #fo-table thead tr {
@@ -197,4 +204,9 @@ h1, h2, h3 {
 #fo-table tbody tr:hover {
 	background: #f0f0f0;
 	cursor: pointer;
+}
+
+#tbodySeparator {
+    background: #c8c8c8;
+    height: 15px;
 }
