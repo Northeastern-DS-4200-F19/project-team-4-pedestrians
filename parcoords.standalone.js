@@ -6463,7 +6463,7 @@
                 axisElement.selectAll('path').style('fill', 'none').style('stroke', '#222').style('shape-rendering', 'crispEdges');
 
                 axisElement.selectAll('line').style('fill', 'none').style('stroke', '#222').style('shape-rendering', 'crispEdges');
-            }).append('svg:text').attr('text-anchor', 'middle').attr('class', 'label').attr('x', 0).attr('y', 0).attr('transform', 'translate(0,-5) rotate(' + config.dimensionTitleRotation + ')').text(dimensionLabels(config)).on('dblclick', flipAxisAndUpdatePCP(config, pc, axis)).on('wheel', rotateLabels(config, pc));
+            }).append('svg:text').attr('text-anchor', 'middle').attr('class', 'label').attr('x', 0).attr('y', 0).attr('transform', 'translate(0,-5) rotate(' + config.dimensionTitleRotation + ')').text(dimensionLabels(config)).on('wheel', rotateLabels(config, pc));
 
             // Update
             g_data.attr('opacity', 0);
@@ -8898,7 +8898,7 @@
                 axisElement.selectAll('path').style('fill', 'none').style('stroke', '#222').style('shape-rendering', 'crispEdges');
 
                 axisElement.selectAll('line').style('fill', 'none').style('stroke', '#222').style('shape-rendering', 'crispEdges');
-            }).append('svg:text').attr('text-anchor', 'middle').attr('y', 0).attr('transform', 'translate(0,-5) rotate(' + config.dimensionTitleRotation + ')').attr('x', 0).attr('class', 'label').text(dimensionLabels(config)).on('dblclick', flipAxisAndUpdatePCP(config, pc, axis)).on('wheel', rotateLabels(config, pc));
+            }).append('svg:text').attr('text-anchor', 'middle').attr('y', 0).attr('transform', 'translate(0,-5) rotate(' + config.dimensionTitleRotation + ')').attr('x', 0).attr('class', 'label').text(dimensionLabels(config)).on('wheel', rotateLabels(config, pc));
 
             if (config.nullValueSeparator === 'top') {
                 pc.svg.append('line').attr('x1', 0).attr('y1', 1 + config.nullValueSeparatorPadding.top).attr('x2', w(config)).attr('y2', 1 + config.nullValueSeparatorPadding.top).attr('stroke-width', 1).attr('stroke', '#777').attr('fill', 'none').attr('shape-rendering', 'crispEdges');
@@ -10473,7 +10473,7 @@
         }).sort(function (a, b) {
             return a[0] - b[0];
         }).forEach(function (p, i) {
-            i === 0 ? ctx.moveTo(p[0], p[1]) : ctx.lineTo(p[0], p[1]);
+            i === 0 ? ctx.moveTo(p[0], p[1] + 1) : ctx.lineTo(p[0], p[1] + 1);
         });
     };
 
