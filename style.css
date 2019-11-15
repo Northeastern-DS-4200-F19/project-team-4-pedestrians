@@ -15,6 +15,10 @@ h1, h2, h3 {
     margin: 40px auto;
 }
 
+#lower-content-column {
+	margin-top: 100px;
+}
+
 /* But your visualization should be full-width and full-height */
 .vis-container {
     width: 100%;
