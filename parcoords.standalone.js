@@ -10866,7 +10866,7 @@
         markedShadowBlur: 10,
         rate: 20,
         width: 980,
-        height: 300,
+        height: 500,
         margin: { top: 24, right: 20, bottom: 12, left: 20 },
         nullValueSeparator: 'undefined', // set to "top" or "bottom"
         nullValueSeparatorPadding: { top: 8, right: 0, bottom: 8, left: 0 },

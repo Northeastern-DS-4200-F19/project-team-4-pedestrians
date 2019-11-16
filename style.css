@@ -16,7 +16,7 @@ h1, h2, h3 {
 }
 
 #lower-content-column {
-	margin-top: 100px;
+    margin-top: 100px;
 }
 
 /* But your visualization should be full-width and full-height */
@@ -41,8 +41,8 @@ h1, h2, h3 {
 
 #legends-holder,
 #table-holder {
-	margin-top: 25px;
-	height: 250px;
+    margin-top: 25px;
+    height: 250px;
 }
 
 /* Fork on GitHub ribbon via https://codepo8.github.io/css-fork-on-github-ribbon/# */
@@ -206,11 +206,68 @@ h1, h2, h3 {
 }
 
 #fo-table tbody tr:hover {
-	background: #f0f0f0;
-	cursor: pointer;
+    background: #f0f0f0;
+    cursor: pointer;
 }
 
 #tbodySeparator {
     background: #c8c8c8;
     height: 15px;
+}
+
+#legend-img {
+    width: 60%;
+    margin: 20% 10% 10% 15%;
+}
+
+.map-path:hover {
+    fill: #c8c8c8;
+    cursor: pointer;
+}
+
+.map-path-stroke {
+    stroke: #000;
+    stroke-width: 0.5px;
+}
+
+.cls-1, .cls-6, .cls-7 {
+    stroke-miterlimit: 10;
+}
+
+.cls-2 {
+    fill: #72ac4d;
+}
+
+.cls-4 {
+    fill: #9ae5d3;
+}
+
+.cls-5 {
+    fill: #606060;
+}
+
+.cls-6 {
+    stroke: #fff;
+}
+
+.cls-14, .cls-7 {
+    fill: #e6e6e6;
+}
+
+.cls-7 {
+    stroke: #ccc;
+}
+
+.cls-8 {
+    font-size: 9px;
+}
+
+.cls-13 {
+    font-size: 10px;
+    fill: #fb2c3b;
+    font-weight: 700;
+}
+
+.cls-15 {
+    font-size: 8px;
 }

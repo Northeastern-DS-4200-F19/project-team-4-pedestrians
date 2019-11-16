@@ -1,13 +1,13 @@
-let bmc = {
-    title: "Park side heading towards Boston Med. Center",
-    color: "rgb(0,151,255)",
-    icon: "<svg width='50px' height='25px' aria-hidden=\"true\" focusable=\"false\"><use xlink:href=\"./images/icons.svg#bmc\"></use></svg>"
-};
-
 let neu = {
     title: "Park side heading towards Huntington Ave.",
-    color: "rgb(255,151,0)",
+    color: "#ff9600",
     icon: "<svg width='50px' height='25px' aria-hidden=\"true\" focusable=\"false\"><use xlink:href=\"./images/icons.svg#neu\"></use></svg>"
+};
+
+let bmc = {
+    title: "Park side heading towards Boston Med. Center",
+    color: "#0096ff",
+    icon: "<svg width='50px' height='25px' aria-hidden=\"true\" focusable=\"false\"><use xlink:href=\"./images/icons.svg#bmc\"></use></svg>"
 };
 
 let mapData = {
@@ -69,15 +69,15 @@ function createTable(data, columns, pc) {
     let cells = rows.selectAll('td')
         .data(function (row) {
             let result = [];
-            if (row[columns[0]] === bmc.title) {
+            if (row[columns[0]] === neu.title) {
                 result.push({
                     column: columns[0],
-                    value: bmc.icon
+                    value: neu.icon
                 })
             } else {
                 result.push({
                     column: columns[0],
-                    value: neu.icon
+                    value: bmc.icon
                 })
             }
             for (let i = 1; i < columns.length; i++) {
@@ -200,10 +200,10 @@ function createParallelCoordinates(data, coordinates) {
         .hideAxis([coordinates[0]])
         .color(d => {
             let sideOfRes = d[coordinates[0]];
-            if (sideOfRes === bmc.title) {
-                return bmc.color
-            } else {
+            if (sideOfRes === neu.title) {
                 return neu.color
+            } else {
+                return bmc.color
             }
         })
         .render()
