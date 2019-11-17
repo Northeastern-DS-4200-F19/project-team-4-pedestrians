@@ -24,6 +24,20 @@ let mapData = {
 // Init ParCoords globally
 let pc;
 
+let pathElements = Array.from(document.querySelectorAll('path, rect'));
+
+// add event listeners
+pathElements.forEach(function(el) {
+    if (el.id && el.id.includes('map_')) {
+        el.addEventListener("mouseover", function() {
+            highlightPath(el.id);
+        })
+        el.addEventListener("mouseout", function() {
+            unhighlightPath(el.id);
+        })
+    }
+})
+
 // Parse survey data
 d3.csv("./data/survey-data.csv").then(function (data) {
     pc = createParallelCoordinates(data, data.columns);
@@ -45,11 +59,12 @@ function createTable(data, columns, pc) {
         .append("table")
         .attr("id", "fo-table");
     let thead = table.append("thead");
-    table.append("tbody").attr("id", "tbodyForSelected");
-    table.append("div").attr("id", "tbodySeparator");
     let tbodyForDeselected = table.append("tbody")
         .attr("id", "tbodyForDeselected");
-
+    let tableSeparator = table.append("div").attr("id", "tbodySeparator");
+    tableSeparator.append("h6").attr("id", "seperatorHeader");
+    table.append("tbody").attr("id", "tbodyForSelected");
+    d3.select("#seperatorHeader").html("Selected Responses");
     thead.append('tr')
         .selectAll('th')
         .data(columns)
@@ -95,13 +110,23 @@ function createTable(data, columns, pc) {
 
     return table;
 }
-
+ 
 function tableRowOnClick() {
     let selectedRow = d3.select(this);
+
     if (selectedRow.classed('selected')) {
+        // TODO: remove selectedRow (which is stored as a coppy in tbodyForSelected) from tbodyForSelected
         d3.select('#tbodyForDeselected').node().append(selectedRow.node());
+       
     } else {
         d3.select('#tbodyForSelected').node().append(selectedRow.node());
+        // Uncomment below to not remove from selectable list and comment out above line
+
+        // Node must be cloned to avoid moving it on the DOM
+        // Node must be cloned in separate line of retrieval
+        // let selectedRowNode = selectedRow.node();
+        // let selectedRowNodeClone = selectedRowNode.cloneNode(true);
+        // d3.select('#tbodyForSelected').node().append(selectedRowNodeClone);
     }
     selectedRow.classed('selected', !selectedRow.classed('selected'));
     highlightSelectedRows();
@@ -166,6 +191,31 @@ function highlightPaths(data) {
         }
         d3.select(mapId).attr("fill", congestionColor);
     });
+}
+
+function highlightPath(path) {
+    let mapId = '#' + path;
+    let congestion = mapData[path.charAt(path.length-1)];
+    let congestionColor;
+
+        switch (congestion) {
+            case 'low':
+                congestionColor = '#d9d9d9';
+                break;
+            case 'medium':
+                congestionColor = '#a6a6a6';
+                break;
+            case 'high':
+                congestionColor = '#595959';
+                break;
+            default:
+        }
+        d3.select(mapId).attr("fill", congestionColor);
+}
+
+function unhighlightPath(path) {
+    let mapId = '#' + path;
+    d3.select(mapId).attr("fill", 'white');
 }
 
 /**
