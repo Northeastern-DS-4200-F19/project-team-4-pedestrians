@@ -194,6 +194,9 @@ function highlightPaths(data) {
 }
 
 function highlightPath(path) {
+    // if something highlighted in table, disable map highlight
+    let selectedPaths = d3.select('#tbodyForSelected').node();
+    if (selectedPaths.childElementCount > 0) return;
     let mapId = '#' + path;
     let congestion = mapData[path.charAt(path.length-1)];
     let congestionColor;
@@ -214,6 +217,12 @@ function highlightPath(path) {
 }
 
 function unhighlightPath(path) {
+    // TODO:  if path is in the selected table, do not unhighlight that path
+
+    // if something highlighted in table, disable map highlight
+    let selectedPaths = d3.select('#tbodyForSelected').node();
+    if (selectedPaths.childElementCount > 0) return;
+
     let mapId = '#' + path;
     d3.select(mapId).attr("fill", 'white');
 }
