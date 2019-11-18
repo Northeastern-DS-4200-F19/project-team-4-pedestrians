@@ -1,12 +1,12 @@
 let neu = {
     title: "Park side heading towards Huntington Ave.",
-    color: "#ff9600",
+    color: "#0088FF",
     icon: "<svg width='50px' height='25px' aria-hidden=\"true\" focusable=\"false\"><use xlink:href=\"./images/icons.svg#neu\"></use></svg>"
 };
 
 let bmc = {
     title: "Park side heading towards Boston Med. Center",
-    color: "#0096ff",
+    color: "#f678a7",
     icon: "<svg width='50px' height='25px' aria-hidden=\"true\" focusable=\"false\"><use xlink:href=\"./images/icons.svg#bmc\"></use></svg>"
 };
 
