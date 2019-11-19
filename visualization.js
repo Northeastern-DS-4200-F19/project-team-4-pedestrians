@@ -1,12 +1,12 @@
 let neu = {
     title: "Park side heading towards Huntington Ave.",
-    color: "#ff9600",
+    color: "#0088FF",
     icon: "<svg width='50px' height='25px' aria-hidden=\"true\" focusable=\"false\"><use xlink:href=\"./images/icons.svg#neu\"></use></svg>"
 };
 
 let bmc = {
     title: "Park side heading towards Boston Med. Center",
-    color: "#0096ff",
+    color: "#f678a7",
     icon: "<svg width='50px' height='25px' aria-hidden=\"true\" focusable=\"false\"><use xlink:href=\"./images/icons.svg#bmc\"></use></svg>"
 };
 
@@ -21,24 +21,32 @@ let mapData = {
     h: "high"
 };
 
+let tooltipDiv = d3.select("#map-holder").append("div")
+    .attr("class", "tooltip")
+    .style("display", "none");
+
 // Init ParCoords globally
 let pc;
 
+/**
+ * Add event listeners to map paths
+ */
 let pathElements = Array.from(document.querySelectorAll('path, rect'));
-
-// add event listeners
-pathElements.forEach(function(el) {
+pathElements.forEach(function (el) {
     if (el.id && el.id.includes('map_')) {
-        el.addEventListener("mouseover", function() {
-            highlightPath(el.id);
-        })
-        el.addEventListener("mouseout", function() {
-            unhighlightPath(el.id);
-        })
+        el.addEventListener("mouseover", function () {
+            hoverPath(el.id);
+        });
+        el.addEventListener("mouseout", function () {
+            unhoverPath(el.id);
+        });
+        el.addEventListener("mousemove", hoverPathMousemove);
     }
 })
 
-// Parse survey data
+/**
+ * Create parallel coordinate chart and table with CSV data
+ */
 d3.csv("./data/survey-data.csv").then(function (data) {
     pc = createParallelCoordinates(data, data.columns);
     createTable(data, data.columns, pc);
@@ -70,7 +78,7 @@ function createTable(data, columns, pc) {
         .data(columns)
         .enter()
         .append('th')
-        .attr("style", "font-size:12px",)
+        .attr("style", "font-size:12px")
         .text(function (column) {
             return column
         });
@@ -96,7 +104,7 @@ function createTable(data, columns, pc) {
                 })
             }
             for (let i = 1; i < columns.length; i++) {
-                result.push({column: columns[i], value: row[columns[i]]})
+                result.push({ column: columns[i], value: row[columns[i]] })
             }
             return result;
         })
@@ -110,14 +118,14 @@ function createTable(data, columns, pc) {
 
     return table;
 }
- 
+
 function tableRowOnClick() {
     let selectedRow = d3.select(this);
 
     if (selectedRow.classed('selected')) {
         // TODO: remove selectedRow (which is stored as a coppy in tbodyForSelected) from tbodyForSelected
         d3.select('#tbodyForDeselected').node().append(selectedRow.node());
-       
+
     } else {
         d3.select('#tbodyForSelected').node().append(selectedRow.node());
         // Uncomment below to not remove from selectable list and comment out above line
@@ -175,60 +183,13 @@ function highlightPaths(data) {
         let pathId = path.toLowerCase();
         let mapId = '#map_' + pathId;
         let congestion = mapData[pathId];
-        let congestionColor;
-
-        switch (congestion) {
-            case 'low':
-                congestionColor = '#d9d9d9';
-                break;
-            case 'medium':
-                congestionColor = '#a6a6a6';
-                break;
-            case 'high':
-                congestionColor = '#595959';
-                break;
-            default:
-        }
+        let congestionColor = getCongestionColor(congestion);
         d3.select(mapId).attr("fill", congestionColor);
     });
 }
 
-function highlightPath(path) {
-    // if something highlighted in table, disable map highlight
-    let selectedPaths = d3.select('#tbodyForSelected').node();
-    if (selectedPaths.childElementCount > 0) return;
-    let mapId = '#' + path;
-    let congestion = mapData[path.charAt(path.length-1)];
-    let congestionColor;
-
-        switch (congestion) {
-            case 'low':
-                congestionColor = '#d9d9d9';
-                break;
-            case 'medium':
-                congestionColor = '#a6a6a6';
-                break;
-            case 'high':
-                congestionColor = '#595959';
-                break;
-            default:
-        }
-        d3.select(mapId).attr("fill", congestionColor);
-}
-
-function unhighlightPath(path) {
-    // TODO:  if path is in the selected table, do not unhighlight that path
-
-    // if something highlighted in table, disable map highlight
-    let selectedPaths = d3.select('#tbodyForSelected').node();
-    if (selectedPaths.childElementCount > 0) return;
-
-    let mapId = '#' + path;
-    d3.select(mapId).attr("fill", 'white');
-}
-
 /**
- * Unhighlights the selected path
+ * Unhighlights the selected paths
  * @param {Object} data
  */
 function unhighlightPaths(data) {
@@ -238,6 +199,72 @@ function unhighlightPaths(data) {
         let mapId = '#map_' + pathId;
         d3.select(mapId).attr("fill", 'white');
     });
+}
+
+/**
+ * Highlight path on hover if no responses are selected, and display
+ * data on demand tooltip
+ * @param {String} path 
+ */
+function hoverPath(path) {
+
+    tooltipDiv.style("display", "inline");
+
+    // if something highlighted in table, disable map highlight
+    let selectedPaths = d3.select('#tbodyForSelected').node();
+    if (selectedPaths.childElementCount > 0) return;
+    let mapId = '#' + path;
+    let congestion = mapData[path.charAt(path.length - 1)];
+    let congestionColor = getCongestionColor(congestion);
+    d3.select(mapId).attr("fill", congestionColor);
+}
+
+/**
+ * Un-Highlight path on hover if no responses are selected, and hide
+ * data on demand tooltip
+ * @param {String} path 
+ */
+function unhoverPath(path) {
+    tooltipDiv.style("display", "none");
+
+    // If something highlighted in table, disable map highlight
+    let selectedPaths = d3.select('#tbodyForSelected').node();
+    if (selectedPaths.childElementCount > 0) return;
+
+    let mapId = '#' + path;
+    d3.select(mapId).attr("fill", 'white');
+}
+
+/**
+ * On moving mouse on path, move tooltip
+ * @param {MouseEvent} event 
+ */
+function hoverPathMousemove(event) {
+    tooltipDiv
+        .text('test')
+        .style("left", event.clientX + 15 + "px")
+        .style("top", event.clientY + 750 + "px");
+}
+
+/**
+ * Returns appropriate color representing congestion
+ * @param {String} congestion 
+ */
+function getCongestionColor(congestion) {
+    let congestionColor = 'white'
+    switch (congestion) {
+        case 'low':
+            congestionColor = '#d9d9d9';
+            break;
+        case 'medium':
+            congestionColor = '#a6a6a6';
+            break;
+        case 'high':
+            congestionColor = '#595959';
+            break;
+        default:
+    }
+    return congestionColor;
 }
 
 function moveBrushedToSelectedTableBody(brushed) {
