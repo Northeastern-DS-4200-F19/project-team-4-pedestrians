@@ -63,6 +63,17 @@ h1, h2, h3 {
 	margin: 0 0 0 0;
 }
 
+.tooltip {
+    position: absolute;
+    text-align: center;
+    width: 60px;
+    height: 12px;
+    padding: 8px;
+    font: 10px sans-serif;
+    background: #ddd;
+    pointer-events: none;
+  }
+
 /* Fork on GitHub ribbon via https://codepo8.github.io/css-fork-on-github-ribbon/# */
 #forkongithub a {
     background: #00F;
