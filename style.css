@@ -245,8 +245,9 @@ h1, h2, h3 {
 }
 
 #legend-img {
-	width: 60%;
-	margin-left: 15%;
+	width: 100%;
+    margin-left: 3%;
+    margin-top: 17%;
 }
 
 .map-path:hover {
