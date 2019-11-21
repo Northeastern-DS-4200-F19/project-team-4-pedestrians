@@ -232,6 +232,8 @@ h1, h2, h3 {
     width: 130px;
     border: none;
     border-bottom: 1px solid #c8c8c8;
+    text-align: center;
+    font-size: 12px;
 }
 
 #fo-table tbody tr:hover {

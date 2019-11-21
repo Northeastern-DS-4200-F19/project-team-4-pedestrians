@@ -42,7 +42,7 @@ pathElements.forEach(function (el) {
         });
         el.addEventListener("mousemove", hoverPathMousemove);
     }
-})
+});
 
 /**
  * Create parallel coordinate chart and table with CSV data
@@ -78,44 +78,13 @@ function createTable(data, columns, pc) {
         .data(columns)
         .enter()
         .append('th')
-        .attr("style", "font-size:12px")
         .text(function (column) {
             return column
         });
 
-    let rows = tbodyForDeselected.selectAll('tr')
-        .data(data)
-        .enter()
-        .append('tr')
+    renderTableRows("#tbodyForDeselected", data);
+    tbodyForDeselected.selectAll('tr')
         .on('click', tableRowOnClick);
-
-    let cells = rows.selectAll('td')
-        .data(function (row) {
-            let result = [];
-            if (row[columns[0]] === neu.title) {
-                result.push({
-                    column: columns[0],
-                    value: neu.icon
-                })
-            } else {
-                result.push({
-                    column: columns[0],
-                    value: bmc.icon
-                })
-            }
-            for (let i = 1; i < columns.length; i++) {
-                result.push({ column: columns[i], value: row[columns[i]] })
-            }
-            return result;
-        })
-        .enter()
-        .append('td')
-        .style('text-align', 'center')
-        .style('font-size', '12px')
-        .html(function (d) {
-            return d.value;
-        });
-
     return table;
 }
 
@@ -160,7 +129,6 @@ function highlightSelectedRows() {
     selectedRows.forEach(function (d) {
         highlightPaths(d);
     });
-    console.log(deselectedRows);
 }
 
 function collectPathsOnly(data) {
@@ -204,7 +172,7 @@ function unhighlightPaths(data) {
 /**
  * Highlight path on hover if no responses are selected, and display
  * data on demand tooltip
- * @param {String} path 
+ * @param {String} path
  */
 function hoverPath(path) {
 
@@ -222,7 +190,7 @@ function hoverPath(path) {
 /**
  * Un-Highlight path on hover if no responses are selected, and hide
  * data on demand tooltip
- * @param {String} path 
+ * @param {String} path
  */
 function unhoverPath(path) {
     tooltipDiv.style("display", "none");
@@ -237,7 +205,7 @@ function unhoverPath(path) {
 
 /**
  * On moving mouse on path, move tooltip
- * @param {MouseEvent} event 
+ * @param {MouseEvent} event
  */
 function hoverPathMousemove(event) {
     tooltipDiv
@@ -248,10 +216,10 @@ function hoverPathMousemove(event) {
 
 /**
  * Returns appropriate color representing congestion
- * @param {String} congestion 
+ * @param {String} congestion
  */
 function getCongestionColor(congestion) {
-    let congestionColor = 'white'
+    let congestionColor = 'white';
     switch (congestion) {
         case 'low':
             congestionColor = '#d9d9d9';
@@ -267,8 +235,63 @@ function getCongestionColor(congestion) {
     return congestionColor;
 }
 
-function moveBrushedToSelectedTableBody(brushed) {
+/**
+ * Format a single resident response object to a list of objects.
+ * Each object of the list has column and value properties.
+ * The "Side of Residency" entry is handled explicitly because we
+ * want to replace text with an svg icon.
+ * @param response is a resident response object
+ * @returns [] a list of objects where each object has column and value properties
+ */
+function residentResponseDataProcessing(response) {
+    let sideOfRes = "Side of Residency";
+    let result = [];
+    if (response[sideOfRes] === neu.title) {
+        result.push({
+            column: response[sideOfRes],
+            value: neu.icon
+        })
+    } else {
+        result.push({
+            column: response[sideOfRes],
+            value: bmc.icon
+        })
+    }
+    for (let [key, value] of Object.entries(response)) {
+        if (key !== 'Side of Residency') {
+            result.push({column: key, value: response[key]})
+        }
+    }
+    return result;
+}
 
+/**
+ * Append data to the end of the table. The table can be identified through its id.
+ * The data is default to be formatted using the residentResponseDataProcessing function.
+ * @param tableId is the target table's id
+ * @param data is a list of objects
+ * @param rowDataFormatter
+ */
+function renderTableRows(tableId, data, rowDataFormatter = residentResponseDataProcessing) {
+    d3.select(tableId).selectAll('tr')
+        .data(data)
+        .enter()
+        .append('tr')
+        .selectAll('td')
+        .data(response => rowDataFormatter(response))
+        .enter()
+        .append('td')
+        .html(function (d) {
+            return d.value;
+        });
+}
+
+/**
+ * Remove all rows from the target table. The table can be identified through its id.
+ * @param tableId the id of the table in html
+ */
+function removeAllRowsFromTable(tableId) {
+    d3.select(tableId).selectAll('tr').remove();
 }
 
 /**
@@ -283,7 +306,7 @@ function createParallelCoordinates(data, coordinates) {
     };
     let pc = ParCoords(config)("#parcoords-holder");
     pc.data(data)
-        .hideAxis([coordinates[0]])
+        .hideAxis([coordinates[0], coordinates[5]]) // hide the side of residency and id columns
         .color(d => {
             let sideOfRes = d[coordinates[0]];
             if (sideOfRes === neu.title) {
@@ -296,9 +319,15 @@ function createParallelCoordinates(data, coordinates) {
         .createAxes()
         .shadows()
         .brushMode('1D-axes')
-        .on('brush', function (data) {
-            moveBrushedToSelectedTableBody(data)
+        .on('brushend', function (brushed) {
+            if (brushed.length !== data.length) {
+                removeAllRowsFromTable('#tbodyForSelected');
+                renderTableRows('#tbodyForSelected', brushed)
+            } else {
+                removeAllRowsFromTable('#tbodyForSelected');
+            }
         });
 
     return pc;
 }
+
