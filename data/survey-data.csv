@@ -1,15 +1,15 @@
 Side of Residency,Pref. Path (rush),Pref. Path (not rush),Generally Pref. Path,Generally Least Pref. Path,id
-Park side heading towards Boston Med. Center,D,A,C,B,1
-Park side heading towards Boston Med. Center,D,C,D,B,2
-Park side heading towards Boston Med. Center,A,C,C,D,3
-Park side heading towards Boston Med. Center,G,G,G,H,4
-Park side heading towards Huntington Ave.,E,G,G,H,5
-Park side heading towards Huntington Ave.,A,A,A,C,6
-Park side heading towards Boston Med. Center,D,C,C,B,7
-Park side heading towards Boston Med. Center,D,C,C,A,8
-Park side heading towards Huntington Ave.,H,G,G,D,9
-Park side heading towards Huntington Ave.,E,G,G,H,10
-Park side heading towards Boston Med. Center,G,G,G,H,11
-Park side heading towards Boston Med. Center,C,C,C,A,12
-Park side heading towards Boston Med. Center,A,A,C,D,13
-Park side heading towards Huntington Ave.,G,G,G,H,14
+Park side heading towards Boston Med. Center,H,E,G,F,1
+Park side heading towards Boston Med. Center,H,G,H,F,2
+Park side heading towards Boston Med. Center,E,G,G,H,3
+Park side heading towards Boston Med. Center,C,C,C,D,4
+Park side heading towards Huntington Ave.,A,C,C,D,5
+Park side heading towards Huntington Ave.,E,E,E,G,6
+Park side heading towards Boston Med. Center,H,G,G,F,7
+Park side heading towards Boston Med. Center,H,G,G,E,8
+Park side heading towards Huntington Ave.,D,C,C,H,9
+Park side heading towards Huntington Ave.,A,C,C,D,10
+Park side heading towards Boston Med. Center,C,C,C,D,11
+Park side heading towards Boston Med. Center,G,G,G,E,12
+Park side heading towards Boston Med. Center,E,E,G,H,13
+Park side heading towards Huntington Ave.,C,C,C,D,14
