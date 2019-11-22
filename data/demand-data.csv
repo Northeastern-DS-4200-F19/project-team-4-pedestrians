@@ -1,0 +1,6 @@
+﻿Path Taken,A,B,C,D,E,F,G,H
+Total Number of Pedestrians,80,12,79,259,56,8,29,275
+Level of Congestion,Medium,Low,Medium,High,Medium,Low,Low,High
+Average (People/Hour),6.67,1,6.58,21.58,4.67,0.67,2.42,22.92
+Most Preferable,1,0,6,1,6,0,0,
+Least Preferable,2,3,1,3,0,0,0,5
