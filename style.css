@@ -210,14 +210,14 @@ h1, h2, h3 {
     display: block;
     width: 100%;
     overflow: auto;
-    height: 150px;
+    height: 200px;
 }
 
-#tbodyForDeselected {
+#tbodyForMasterList {
     display: block;
     width: 100%;
     overflow: auto;
-    height: 120px;
+    height: 100px;
 }
 
 #fo-table thead tr {

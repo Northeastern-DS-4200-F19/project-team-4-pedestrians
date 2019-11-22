@@ -44,75 +44,94 @@ pathElements.forEach(function (el) {
     }
 });
 
+let selectedRows = [];
+
 /**
  * Create parallel coordinate chart and table with CSV data
  */
 d3.csv("./data/survey-data.csv").then(function (data) {
     pc = createParallelCoordinates(data, data.columns);
-    createTable(data, data.columns, pc);
+    createTable(data, data.columns);
 });
 
 /**
  * Creates a table and appends to SVG
  * @param {Object} data
  * @param {Object} columns
- * @param {ParCoords} pc
  */
-function createTable(data, columns, pc) {
+function createTable(data, columns) {
+    const columnsCopy = [...columns];
+    const idIndex = columnsCopy.indexOf("id");
+    if (idIndex > -1) {
+        columnsCopy.splice(idIndex, 1);
+    }
     let svg = d3.select("#vis-svg");
     let table = svg.append("foreignObject")
-        .attr("width", 800)
+        .attr("width", 700)
         .attr("height", 400)
         .append("xhtml:body")
         .append("table")
         .attr("id", "fo-table");
     let thead = table.append("thead");
-    let tbodyForDeselected = table.append("tbody")
-        .attr("id", "tbodyForDeselected");
+    let tbodyForMasterList = table.append("tbody")
+        .attr("id", "tbodyForMasterList");
     let tableSeparator = table.append("div").attr("id", "tbodySeparator");
     tableSeparator.append("h6").attr("id", "seperatorHeader");
     table.append("tbody").attr("id", "tbodyForSelected");
     d3.select("#seperatorHeader").html("Selected Responses");
     thead.append('tr')
         .selectAll('th')
-        .data(columns)
+        .data(columnsCopy)
         .enter()
         .append('th')
         .text(function (column) {
             return column
         });
 
-    renderTableRows("#tbodyForDeselected", data);
-    tbodyForDeselected.selectAll('tr')
-        .on('click', tableRowOnClick);
+    renderTableRows("#tbodyForMasterList", data);
+    tbodyForMasterList.selectAll('tr')
+        .on('click', masterListRowOnClick);
     return table;
 }
 
-function tableRowOnClick() {
+function masterListRowOnClick(data) {
     let selectedRow = d3.select(this);
-
     if (selectedRow.classed('selected')) {
-        // TODO: remove selectedRow (which is stored as a coppy in tbodyForSelected) from tbodyForSelected
-        d3.select('#tbodyForDeselected').node().append(selectedRow.node());
 
     } else {
-        d3.select('#tbodyForSelected').node().append(selectedRow.node());
-        // Uncomment below to not remove from selectable list and comment out above line
-
-        // Node must be cloned to avoid moving it on the DOM
-        // Node must be cloned in separate line of retrieval
-        // let selectedRowNode = selectedRow.node();
-        // let selectedRowNodeClone = selectedRowNode.cloneNode(true);
-        // d3.select('#tbodyForSelected').node().append(selectedRowNodeClone);
+        selectedRows.push(data);
+        removeAllRowsFromTable("#tbodyForSelected");
+        renderTableRows("#tbodyForSelected", selectedRows);
+        d3.select("#tbodyForSelected").selectAll('tr').on('click', selectedRowOnClick);
+        selectedRow.classed('selected', true);
     }
-    selectedRow.classed('selected', !selectedRow.classed('selected'));
+    // the selected attribute will be removed only when it is deselected from the selected region
+    // selectedRow.classed('selected', !selectedRow.classed('selected'));
     highlightSelectedRows();
+}
+
+function selectedRowOnClick(data) {
+    d3.select(this).remove();
+    const toRemove = new Set([data.id]);
+    selectedRows = selectedRows.filter(obj => !toRemove.has(obj.id));
+    updateMasterListSelection();
+    highlightSelectedRows()
+}
+
+function updateMasterListSelection() {
+    let selectedSet = new Set(selectedRows.map(obj => obj.id));
+    console.log(selectedSet);
+    d3.select('#tbodyForMasterList')
+        .selectAll('tr')
+        .classed('selected', function (data) {
+            return selectedSet.has(data.id);
+        });
 }
 
 function highlightSelectedRows() {
     let deselectedRows = [];
     let selectedRows = [];
-    d3.select('#tbodyForDeselected').selectAll('tr').select(function (d) {
+    d3.select('#tbodyForMasterList').selectAll('tr').select(function (d) {
         deselectedRows.push(d)
     });
     d3.select('#tbodyForSelected').selectAll('tr').select(function (d) {
@@ -245,6 +264,8 @@ function getCongestionColor(congestion) {
  */
 function residentResponseDataProcessing(response) {
     let sideOfRes = "Side of Residency";
+    let id = "id";
+    let excludeColumns = new Set([sideOfRes, id]);
     let result = [];
     if (response[sideOfRes] === neu.title) {
         result.push({
@@ -258,7 +279,7 @@ function residentResponseDataProcessing(response) {
         })
     }
     for (let [key, value] of Object.entries(response)) {
-        if (key !== 'Side of Residency') {
+        if (!(excludeColumns.has(key))) {
             result.push({column: key, value: response[key]})
         }
     }
@@ -317,7 +338,6 @@ function createParallelCoordinates(data, coordinates) {
         })
         .render()
         .createAxes()
-        .shadows()
         .brushMode('1D-axes')
         .on('brushend', function (brushed) {
             if (brushed.length !== data.length) {
