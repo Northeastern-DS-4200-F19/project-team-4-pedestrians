@@ -30,6 +30,8 @@ let tooltipDiv = d3.select("#map-holder").append("div")
 // Init ParCoords globally
 let pc;
 
+let reset = true;
+
 /**
  * Add event listeners to map paths
  */
@@ -67,7 +69,7 @@ d3.csv("./data/demand-data.csv").then(function (data) {
 
 /**
  * Populate tooltip object with CSV data
- * @param {Object} data 
+ * @param {Object} data
  */
 function populateTooltipModel(data) {
     tooltipModel.map_a = data[0];
@@ -77,7 +79,7 @@ function populateTooltipModel(data) {
     tooltipModel.map_e = data[4];
     tooltipModel.map_f = data[5];
     tooltipModel.map_g = data[6];
-    tooltipModel.map_h = data[7];;
+    tooltipModel.map_h = data[7];
 }
 
 /**
@@ -87,10 +89,6 @@ function populateTooltipModel(data) {
  */
 function createTable(data, columns) {
     const columnsCopy = [...columns];
-    const idIndex = columnsCopy.indexOf("id");
-    if (idIndex > -1) {
-        columnsCopy.splice(idIndex, 1);
-    }
     let svg = d3.select("#vis-svg");
     let table = svg.append("foreignObject")
         .attr("width", 700)
@@ -99,12 +97,12 @@ function createTable(data, columns) {
         .append("table")
         .attr("id", "fo-table");
     let thead = table.append("thead");
-    let tbodyForMasterList = table.append("tbody")
-        .attr("id", "tbodyForMasterList");
+
     let tableSeparator = table.append("div").attr("id", "tbodySeparator");
-    tableSeparator.append("h6").attr("id", "seperatorHeader");
+    tableSeparator.append("h6").attr("id", "separatorHeader");
+    d3.select("#separatorHeader").html("Selected Responses");
+
     table.append("tbody").attr("id", "tbodyForSelected");
-    d3.select("#seperatorHeader").html("Selected Responses");
     thead.append('tr')
         .selectAll('th')
         .data(columnsCopy)
@@ -114,6 +112,13 @@ function createTable(data, columns) {
             return column
         });
 
+    table.append("div")
+        .attr("id", "tbodySeparator")
+        .append("h6")
+        .attr("id", "separatorHeader")
+        .html("All Responses");
+    let tbodyForMasterList = table.append("tbody")
+        .attr("id", "tbodyForMasterList");
     renderTableRows("#tbodyForMasterList", data);
     tbodyForMasterList.selectAll('tr')
         .on('click', masterListRowOnClick);
@@ -121,77 +126,65 @@ function createTable(data, columns) {
 }
 
 function masterListRowOnClick(data) {
+    if (reset) {
+        pc.brushReset();
+        reset = false
+    }
     let selectedRow = d3.select(this);
     if (selectedRow.classed('selected')) {
-
+        // remove the one in the selected table
+        selectedRowOnClick(data);
     } else {
         selectedRows.push(data);
-        removeAllRowsFromTable("#tbodyForSelected");
         renderTableRows("#tbodyForSelected", selectedRows);
-        d3.select("#tbodyForSelected").selectAll('tr').on('click', selectedRowOnClick);
-        selectedRow.classed('selected', true);
     }
-    // the selected attribute will be removed only when it is deselected from the selected region
-    // selectedRow.classed('selected', !selectedRow.classed('selected'));
+    selectedRow.classed('selected', !selectedRow.classed('selected'));
     highlightSelectedRows();
 }
 
 function selectedRowOnClick(data) {
-    d3.select(this).remove();
     const toRemove = new Set([data.id]);
     selectedRows = selectedRows.filter(obj => !toRemove.has(obj.id));
-    updateMasterListSelection();
+    renderTableRows("#tbodyForSelected", selectedRows);
     highlightSelectedRows()
 }
 
-function updateMasterListSelection() {
-    let selectedSet = new Set(selectedRows.map(obj => obj.id));
-    console.log(selectedSet);
-    d3.select('#tbodyForMasterList')
-        .selectAll('tr')
-        .classed('selected', function (data) {
-            return selectedSet.has(data.id);
-        });
-}
-
 function highlightSelectedRows() {
-    let deselectedRows = [];
-    let selectedRows = [];
-    d3.select('#tbodyForMasterList').selectAll('tr').select(function (d) {
-        deselectedRows.push(d)
-    });
-    d3.select('#tbodyForSelected').selectAll('tr').select(function (d) {
-        selectedRows.push(d)
-    });
     if (selectedRows.length !== 0) {
         pc.highlight(selectedRows);
     } else {
         pc.unhighlight();
     }
-    deselectedRows.forEach(function (d) {
-        unhighlightPaths(d);
+    highlightPathsOnMap();
+}
+
+/**
+ * Return a deep copy of the object passed in and remove the specified properties.
+ * @param obj an object
+ * @param props properties to be removed
+ * @returns obj
+ */
+function removeProperties(obj, props) {
+    let objCopy = JSON.parse(JSON.stringify(obj));
+    props.forEach(function (p) {
+        delete objCopy[p]
     });
-    selectedRows.forEach(function (d) {
+    return objCopy;
+}
+
+function highlightPathsOnMap() {
+    clearMapHighlights();
+    d3.select('#tbodyForSelected').selectAll('tr').select(function (d) {
         highlightPaths(d);
     });
 }
 
-function collectPathsOnly(data) {
-    let paths = [];
-    for (let [key, value] of Object.entries(data)) {
-        if (key !== 'Side of Residency') {
-            paths.push(value)
-        }
-    }
-    return paths;
-}
-
 /**
- * Highlights the selected paths on the map
+ * Highlights one selected path on the map
  * @param {Object} data
  */
 function highlightPaths(data) {
-    let paths = collectPathsOnly(data);
+    let paths = Object.values(removeProperties(data, ["Side of Residency", "id"]));
     paths.forEach(function (path) {
         let pathId = path.toLowerCase();
         let mapId = '#map_' + pathId;
@@ -203,11 +196,9 @@ function highlightPaths(data) {
 
 /**
  * Unhighlights the selected paths
- * @param {Object} data
  */
-function unhighlightPaths(data) {
-    let paths = collectPathsOnly(data);
-    paths.forEach(function (path) {
+function clearMapHighlights() {
+    Object.keys(mapData).forEach(function (path) {
         let pathId = path.toLowerCase();
         let mapId = '#map_' + pathId;
         d3.select(mapId).attr("fill", 'white');
@@ -317,8 +308,7 @@ function getCongestionColor(congestion) {
 function residentResponseDataProcessing(response) {
     let sideOfRes = "Side of Residency";
     let id = "id";
-    let excludeColumns = new Set([sideOfRes, id]);
-    let result = [];
+    let result = [{column: response[id], value: response.id}];
     if (response[sideOfRes] === neu.title) {
         result.push({
             column: response[sideOfRes],
@@ -330,10 +320,8 @@ function residentResponseDataProcessing(response) {
             value: bmc.icon
         })
     }
-    for (let [key, value] of Object.entries(response)) {
-        if (!(excludeColumns.has(key))) {
-            result.push({ column: key, value: response[key] })
-        }
+    for (let [key, value] of Object.entries(removeProperties(response, [sideOfRes, id]))) {
+        result.push({column: key, value: response[key]})
     }
     return result;
 }
@@ -346,6 +334,7 @@ function residentResponseDataProcessing(response) {
  * @param rowDataFormatter
  */
 function renderTableRows(tableId, data, rowDataFormatter = residentResponseDataProcessing) {
+    removeAllRowsFromTable(tableId);
     d3.select(tableId).selectAll('tr')
         .data(data)
         .enter()
@@ -368,6 +357,18 @@ function removeAllRowsFromTable(tableId) {
 }
 
 /**
+ * This function is called whenever a user brushes the parallel coordinates.
+ * It resets the survey response table to its initial state.
+ */
+function clearAllSelections() {
+    removeAllRowsFromTable("#tbodyForSelected");
+    d3.select("#tbodyForMasterList").selectAll("tr").classed("selected", false);
+    selectedRows = [];
+    pc.unhighlight();
+    reset = true;
+}
+
+/**
  * Create ParallelCoordinate Table using d3.parcoords
  * @param {Object} data
  * @param {Object} coordinates
@@ -375,13 +376,14 @@ function removeAllRowsFromTable(tableId) {
 function createParallelCoordinates(data, coordinates) {
     let config = {
         tickValues: ['A', 'B', 'C', 'D', 'H', 'G', 'F', 'E'],
-        lineWidth: 2
+        lineWidth: 2,
+        alpha: 0.5
     };
     let pc = ParCoords(config)("#parcoords-holder");
     pc.data(data)
-        .hideAxis([coordinates[0], coordinates[5]]) // hide the side of residency and id columns
+        .hideAxis([coordinates[0], coordinates[1]]) // hide the id and the side of residency on the paracoord
         .color(d => {
-            let sideOfRes = d[coordinates[0]];
+            let sideOfRes = d[coordinates[1]];
             if (sideOfRes === neu.title) {
                 return neu.color
             } else {
@@ -392,12 +394,14 @@ function createParallelCoordinates(data, coordinates) {
         .createAxes()
         .brushMode('1D-axes')
         .on('brushend', function (brushed) {
+            clearAllSelections();
             if (brushed.length !== data.length) {
                 removeAllRowsFromTable('#tbodyForSelected');
                 renderTableRows('#tbodyForSelected', brushed)
             } else {
                 removeAllRowsFromTable('#tbodyForSelected');
             }
+            highlightPathsOnMap();
         });
 
     return pc;
