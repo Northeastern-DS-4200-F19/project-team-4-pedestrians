@@ -115,9 +115,9 @@ h1, h2, h3 {
         display: block;
         top: 0;
         right: 0;
-        width: 200px;
-        overflow: hidden;
-        height: 200px;
+        width: 100px;
+        overflow: visible;
+        height: 100px;
         z-index: 9999;
     }
 
