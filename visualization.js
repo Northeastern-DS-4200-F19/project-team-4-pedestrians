@@ -21,8 +21,10 @@ let mapData = {
     h: "high"
 };
 
+let tooltipModel = {};
+
 let tooltipDiv = d3.select("#map-holder").append("div")
-    .attr("class", "tooltip")
+    .attr("id", "tooltip")
     .style("display", "none");
 
 // Init ParCoords globally
@@ -40,7 +42,9 @@ pathElements.forEach(function (el) {
         el.addEventListener("mouseout", function () {
             unhoverPath(el.id);
         });
-        el.addEventListener("mousemove", hoverPathMousemove);
+        el.addEventListener("mousemove", function () {
+            hoverPathMousemove(event, el.id);
+        });
     }
 });
 
@@ -53,6 +57,28 @@ d3.csv("./data/survey-data.csv").then(function (data) {
     pc = createParallelCoordinates(data, data.columns);
     createTable(data, data.columns);
 });
+
+/**
+ * Read detail-on-demand data and populate model
+ */
+d3.csv("./data/demand-data.csv").then(function (data) {
+    populateTooltipModel(data);
+});
+
+/**
+ * Populate tooltip object with CSV data
+ * @param {Object} data 
+ */
+function populateTooltipModel(data) {
+    tooltipModel.map_a = data[0];
+    tooltipModel.map_b = data[1];
+    tooltipModel.map_c = data[2];
+    tooltipModel.map_d = data[3];
+    tooltipModel.map_e = data[4];
+    tooltipModel.map_f = data[5];
+    tooltipModel.map_g = data[6];
+    tooltipModel.map_h = data[7];;
+}
 
 /**
  * Creates a table and appends to SVG
@@ -223,14 +249,40 @@ function unhoverPath(path) {
 }
 
 /**
- * On moving mouse on path, move tooltip
+ * On moving mouse on path, move tooltip, display details
  * @param {MouseEvent} event
  */
-function hoverPathMousemove(event) {
-    tooltipDiv
-        .text('test')
-        .style("left", event.clientX + 15 + "px")
-        .style("top", event.clientY + 750 + "px");
+function hoverPathMousemove(event, id) {
+    if (tooltipModel[id]) {
+
+        let pathData = tooltipModel[id];
+        tooltipDiv
+            .text('Path ' + pathData['Path'])
+            .style("left", event.clientX + 15 + "px")
+            .style("top", event.clientY + 750 + "px");
+
+        let tooltipData1 = tooltipDiv.append("p")
+            .attr("id", "tooltip-data-1")
+            .text('Level of Congestion: ' + pathData['Level of Congestion']);
+
+        let tooltipData2 = tooltipData1.append("p")
+            .attr("id", "tooltip-tooltipData1-2")
+            .text('Total Pedestrians: ' + pathData['Total Number of Pedestrians']);
+
+        let tooltipData3 = tooltipData2.append("p")
+            .attr("id", "tooltip-data-3")
+            .text('Average (People/Hour): ' + pathData['Average (People/Hour)']);
+
+
+        let tooltipData4 = tooltipData3.append("p")
+            .attr("id", "tooltip-data-4")
+            .text('Most Preferable: ' + pathData['Most Preferable']);
+
+
+        let tooltipData5 = tooltipData4.append("p")
+            .attr("id", "tooltip-data-5")
+            .text('Least Preferable: ' + pathData['Least Preferable']);
+    }
 }
 
 /**
@@ -280,7 +332,7 @@ function residentResponseDataProcessing(response) {
     }
     for (let [key, value] of Object.entries(response)) {
         if (!(excludeColumns.has(key))) {
-            result.push({column: key, value: response[key]})
+            result.push({ column: key, value: response[key] })
         }
     }
     return result;
