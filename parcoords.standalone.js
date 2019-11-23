@@ -10473,7 +10473,7 @@
         }).sort(function (a, b) {
             return a[0] - b[0];
         }).forEach(function (p, i) {
-            i === 0 ? ctx.moveTo(p[0], p[1] + 1) : ctx.lineTo(p[0], p[1] + 1);
+            i === 0 ? ctx.moveTo(p[0], p[1]) : ctx.lineTo(p[0], p[1]);
         });
     };
 
@@ -10865,8 +10865,8 @@
         markedShadowColor: '#ffffff',
         markedShadowBlur: 10,
         rate: 20,
-        width: 980,
-        height: 500,
+        width: 650,
+        height: 300,
         margin: { top: 24, right: 20, bottom: 12, left: 20 },
         nullValueSeparator: 'undefined', // set to "top" or "bottom"
         nullValueSeparatorPadding: { top: 8, right: 0, bottom: 8, left: 0 },

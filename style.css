@@ -33,34 +33,21 @@ h1, h2, h3 {
 }
 
 #table-header {
-	text-align: center;
-	margin-bottom: 1px;
-	text-decoration: underline;
+    text-align: center;
+    margin-bottom: 1px;
 }
 
 #map-holder,
 #legends-holder,
-#table-holder {
-    width: 45%;
-}
-
+#table-holder,
 #parcoords-holder {
-	width: 55%;
+    width: 48%;
+    height: 300px;
 }
 
-#legends-holder,
-#table-holder {
-    margin-top: 25px;
-    height: 400px;
-}
-
-#table-holder {
-	margin-left: 4%;
-}
-
-#seperatorHeader {
-	text-align: center;
-	margin: 0 0 0 0;
+#separatorHeader {
+    text-align: center;
+    margin: 0 0 0 0;
 }
 
 #tooltip {
@@ -74,17 +61,18 @@ h1, h2, h3 {
     pointer-events: none;
     border-style: solid;
     font-weight: bold;
-  }
+    z-index: 1;
+}
 
-  #tooltip-data-1,
-  #tooltip-data-2,
-  #tooltip-data-3,
-  #tooltip-data-4,
-  #tooltip-data-5 {
+#tooltip-data-1,
+#tooltip-data-2,
+#tooltip-data-3,
+#tooltip-data-4,
+#tooltip-data-5 {
     text-align: center;
     font: 12px sans-serif;
     text-decoration: none;
-  }
+}
 
 /* Fork on GitHub ribbon via https://codepo8.github.io/css-fork-on-github-ribbon/# */
 #forkongithub a {
@@ -94,8 +82,7 @@ h1, h2, h3 {
     font-family: arial, sans-serif;
     text-align: center;
     font-weight: bold;
-    padding: 5px 40px;
-    font-size: 1rem;
+    font-size: 12px;
     line-height: 2rem;
     position: relative;
     transition: 0.5s;
@@ -137,8 +124,8 @@ h1, h2, h3 {
     #forkongithub a {
         width: 200px;
         position: absolute;
-        top: 60px;
-        right: -60px;
+        top: 40px;
+        right: -50px;
         transform: rotate(45deg);
         -webkit-transform: rotate(45deg);
         -ms-transform: rotate(45deg);
@@ -210,7 +197,7 @@ h1, h2, h3 {
 }
 
 .selected {
-    background-color: #ebebeb;
+    background-color: rgba(219, 220, 50, 0.3);
 }
 
 #fo-table {
@@ -218,11 +205,23 @@ h1, h2, h3 {
     border-collapse: collapse;
 }
 
+#fo-table {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+#fo-table tr > *:nth-child(1) {
+    width:50px;
+}
+
 #tbodyForSelected {
     display: block;
     width: 100%;
     overflow: auto;
-    height: 200px;
+    height: 160px;
 }
 
 #tbodyForMasterList {
@@ -240,6 +239,10 @@ h1, h2, h3 {
     background: #c8c8c8;
 }
 
+#fo-table th {
+    height: 35px;
+}
+
 #fo-table th, #fo-table td {
     width: 130px;
     border: none;
@@ -248,9 +251,17 @@ h1, h2, h3 {
     font-size: 12px;
 }
 
-#fo-table tbody tr:hover {
+#tbodyForMasterList tr:hover {
     background: #f0f0f0;
     cursor: pointer;
+}
+
+#tbodyForMasterList tr.selected:hover {
+    background-color: rgba(234, 235, 9, 0.15);
+}
+
+#tbodyForSelected tr:hover {
+    cursor: default;
 }
 
 #tbodySeparator {
@@ -259,9 +270,9 @@ h1, h2, h3 {
 }
 
 #legend-img {
-	width: 100%;
-    margin-left: 3%;
-    margin-top: 17%;
+    padding-left: 35px;
+    padding-top: 70px;
+    width: 85%;
 }
 
 .map-path:hover {
