@@ -8724,6 +8724,7 @@
             ctx.brushed.scale(devicePixelRatio, devicePixelRatio);
             ctx.highlight.lineWidth = config.highlightedLineWidth;
             ctx.highlight.scale(devicePixelRatio, devicePixelRatio);
+            ctx.highlight.globalAlpha = config.alpha;
             ctx.marked.lineWidth = config.markedLineWidth;
             ctx.marked.shadowColor = config.markedShadowColor;
             ctx.marked.shadowBlur = config.markedShadowBlur;
@@ -10638,7 +10639,7 @@
 
             config.highlighted = data;
             pc.clear('highlight');
-            selectAll([canvas.foreground, canvas.brushed]).classed('faded', true);
+            selectAll([canvas.foreground, canvas.brushed]).classed('faded', true).style('visibility', 'hidden');
             data.forEach(pathHighlight(config, ctx, position));
             events.call('highlight', this, data);
             return this;
@@ -10650,7 +10651,7 @@
         return function () {
             config.highlighted = [];
             pc.clear('highlight');
-            selectAll([canvas.foreground, canvas.brushed]).classed('faded', false);
+            selectAll([canvas.foreground, canvas.brushed]).classed('faded', false).style('visibility', 'visible');
             return this;
         };
     };
@@ -10859,7 +10860,7 @@
         brushedColor: null,
         alphaOnBrushed: 0.0,
         lineWidth: 1.4,
-        highlightedLineWidth: 3,
+        highlightedLineWidth: 2,
         mode: 'default',
         markedLineWidth: 3,
         markedShadowColor: '#ffffff',
