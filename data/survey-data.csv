@@ -1,4 +1,4 @@
-id,Side of Residency,Pref. Path (rush),Pref. Path (not rush),Generally Pref. Path,Least Pref. Path
+id,Side of Residency,Pref. Path (rush),Pref. Path (not rush),Most Pref. Path,Least Pref. Path
 1,Park side heading towards Boston Med. Center,H,E,G,F
 2,Park side heading towards Boston Med. Center,H,G,H,F
 3,Park side heading towards Boston Med. Center,E,G,G,H
