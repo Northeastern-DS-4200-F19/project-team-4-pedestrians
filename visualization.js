@@ -11,14 +11,14 @@ let bmc = {
 };
 
 let mapData = {
-    a: "medium",
-    b: "low",
-    c: "medium",
-    d: "high",
-    e: "medium",
-    f: "low",
-    g: "low",
-    h: "high"
+    n1: "medium",
+    n2: "low",
+    n3: "medium",
+    n4: "high",
+    b1: "medium",
+    b2: "low",
+    b3: "low",
+    b4: "high"
 };
 
 let tooltipModel = {};
@@ -72,14 +72,14 @@ d3.csv("./data/demand-data.csv").then(function (data) {
  * @param {Object} data
  */
 function populateTooltipModel(data) {
-    tooltipModel.map_a = data[0];
-    tooltipModel.map_b = data[1];
-    tooltipModel.map_c = data[2];
-    tooltipModel.map_d = data[3];
-    tooltipModel.map_e = data[4];
-    tooltipModel.map_f = data[5];
-    tooltipModel.map_g = data[6];
-    tooltipModel.map_h = data[7];
+    tooltipModel.map_n1 = data[0];
+    tooltipModel.map_n2 = data[1];
+    tooltipModel.map_n3 = data[2];
+    tooltipModel.map_n4 = data[3];
+    tooltipModel.map_b1 = data[4];
+    tooltipModel.map_b2 = data[5];
+    tooltipModel.map_b3 = data[6];
+    tooltipModel.map_b4 = data[7];
 }
 
 /**
@@ -211,14 +211,12 @@ function clearMapHighlights() {
  * @param {String} path
  */
 function hoverPath(path) {
-
     tooltipDiv.style("display", "inline");
-
     // if something highlighted in table, disable map highlight
     let selectedPaths = d3.select('#tbodyForSelected').node();
     if (selectedPaths.childElementCount > 0) return;
     let mapId = '#' + path;
-    let congestion = mapData[path.charAt(path.length - 1)];
+    let congestion = mapData[path.substring(path.length - 2, path.length)];
     let congestionColor = getCongestionColor(congestion);
     d3.select(mapId).attr("fill", congestionColor);
 }
@@ -375,7 +373,7 @@ function clearAllSelections() {
  */
 function createParallelCoordinates(data, coordinates) {
     let config = {
-        tickValues: ['A', 'B', 'C', 'D', 'H', 'G', 'F', 'E'],
+        tickValues: ['N1', 'N2', 'N3', 'N4', 'B4', 'B3', 'B2', 'B1'],
         lineWidth: 2,
         alpha: 0.5
     };
