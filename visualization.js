@@ -205,6 +205,16 @@ function clearMapHighlights() {
     });
 }
 
+function highlightAllPaths() {
+    Object.keys(mapData).forEach(function (path) {
+        let pathId = path.toLowerCase();
+        let mapId = '#map_' + pathId;
+        let congestion = mapData[pathId];
+        let congestionColor = getCongestionColor(congestion);
+        d3.select(mapId).attr("fill", congestionColor);
+    });
+}
+
 /**
  * Highlight path on hover if no responses are selected, and display
  * data on demand tooltip
@@ -403,5 +413,21 @@ function createParallelCoordinates(data, coordinates) {
         });
 
     return pc;
+}
+
+function selectAllPathsButton(el) {
+    if (el.value === 'selectAll') {
+        el.value = 'deselectAll';
+        el.style.borderColor = 'darkred';
+        el.style.background = 'darkred';
+        el.textContent = 'Deselect All Paths';
+        highlightAllPaths();
+    } else {
+        el.value = 'selectAll';
+        el.style.background = 'green';
+        el.style.borderColor = 'green';
+        el.textContent = 'Select All Paths';
+        clearMapHighlights();
+    }
 }
 
