@@ -125,6 +125,10 @@ function createTable(data, columns) {
     return table;
 }
 
+/**
+ * Event for click on table
+ * @param {object} data 
+ */
 function masterListRowOnClick(data) {
     if (reset) {
         pc.brushReset();
@@ -142,6 +146,10 @@ function masterListRowOnClick(data) {
     highlightSelectedRows();
 }
 
+/**
+ * Highlights table row and calls remaining brushing functions
+ * @param {object} data 
+ */
 function selectedRowOnClick(data) {
     const toRemove = new Set([data.id]);
     selectedRows = selectedRows.filter(obj => !toRemove.has(obj.id));
@@ -149,6 +157,10 @@ function selectedRowOnClick(data) {
     highlightSelectedRows()
 }
 
+
+/**
+ * Highlights selected rows in the table
+ */
 function highlightSelectedRows() {
     if (selectedRows.length !== 0) {
         pc.highlight(selectedRows);
@@ -172,6 +184,9 @@ function removeProperties(obj, props) {
     return objCopy;
 }
 
+/**
+ * Highlights selected paths on map
+ */
 function highlightPathsOnMap() {
     clearMapHighlights();
     d3.select('#tbodyForSelected').selectAll('tr').select(function (d) {
@@ -205,6 +220,9 @@ function clearMapHighlights() {
     });
 }
 
+/**
+ * Highlights all maps on the path
+ */
 function highlightAllPaths() {
     Object.keys(mapData).forEach(function (path) {
         let pathId = path.toLowerCase();
@@ -415,6 +433,10 @@ function createParallelCoordinates(data, coordinates) {
     return pc;
 }
 
+/**
+ * Click event for select/deselect path button
+ * @param {Object} HTMLelement 
+ */
 function selectAllPathsButton(el) {
     if (el.value === 'selectAll') {
         el.value = 'deselectAll';
