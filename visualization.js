@@ -247,8 +247,8 @@ function hoverPathMousemove(event, id) {
         let pathData = tooltipModel[id];
         tooltipDiv
             .text('Path ' + pathData['Path'])
-            .style("left", event.clientX + 15 + "px")
-            .style("top", event.clientY + 750 + "px");
+            .style("left", event.pageX + 10 + "px")
+            .style("top", event.pageY + 15 + "px");
 
         let tooltipData1 = tooltipDiv.append("p")
             .attr("id", "tooltip-data-1")
