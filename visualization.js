@@ -58,6 +58,7 @@ let selectedRows = [];
 d3.csv("./data/survey-data.csv").then(function (data) {
     pc = createParallelCoordinates(data, data.columns);
     createTable(data, data.columns);
+    highlightAllPaths();
 });
 
 /**
@@ -164,10 +165,11 @@ function selectedRowOnClick(data) {
 function highlightSelectedRows() {
     if (selectedRows.length !== 0) {
         pc.highlight(selectedRows);
+        highlightPathsOnMap();
     } else {
         pc.unhighlight();
+        highlightAllPaths();
     }
-    highlightPathsOnMap();
 }
 
 /**
@@ -221,7 +223,7 @@ function clearMapHighlights() {
 }
 
 /**
- * Highlights all maps on the path
+ * Highlights all paths on the map
  */
 function highlightAllPaths() {
     Object.keys(mapData).forEach(function (path) {
@@ -242,11 +244,6 @@ function hoverPath(path) {
     tooltipDiv.style("display", "inline");
     // if something highlighted in table, disable map highlight
     let selectedPaths = d3.select('#tbodyForSelected').node();
-    if (selectedPaths.childElementCount > 0) return;
-    let mapId = '#' + path;
-    let congestion = mapData[path.substring(path.length - 2, path.length)];
-    let congestionColor = getCongestionColor(congestion);
-    d3.select(mapId).attr("fill", congestionColor);
 }
 
 /**
@@ -256,13 +253,6 @@ function hoverPath(path) {
  */
 function unhoverPath(path) {
     tooltipDiv.style("display", "none");
-
-    // If something highlighted in table, disable map highlight
-    let selectedPaths = d3.select('#tbodyForSelected').node();
-    if (selectedPaths.childElementCount > 0) return;
-
-    let mapId = '#' + path;
-    d3.select(mapId).attr("fill", 'white');
 }
 
 /**
@@ -422,34 +412,15 @@ function createParallelCoordinates(data, coordinates) {
         .on('brushend', function (brushed) {
             clearAllSelections();
             if (brushed.length !== data.length) {
+                d3.select('button').classed('button-disabled', true);
                 removeAllRowsFromTable('#tbodyForSelected');
-                renderTableRows('#tbodyForSelected', brushed)
+                renderTableRows('#tbodyForSelected', brushed);
+                highlightPathsOnMap();
             } else {
                 removeAllRowsFromTable('#tbodyForSelected');
+                highlightAllPaths();
             }
-            highlightPathsOnMap();
         });
 
     return pc;
 }
-
-/**
- * Click event for select/deselect path button
- * @param {Object} HTMLelement 
- */
-function selectAllPathsButton(el) {
-    if (el.value === 'selectAll') {
-        el.value = 'deselectAll';
-        el.style.borderColor = 'darkred';
-        el.style.background = 'darkred';
-        el.textContent = 'Deselect All Paths';
-        highlightAllPaths();
-    } else {
-        el.value = 'selectAll';
-        el.style.background = 'green';
-        el.style.borderColor = 'green';
-        el.textContent = 'Select All Paths';
-        clearMapHighlights();
-    }
-}
-
